@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Upload, 
   Phone, 
@@ -16,39 +18,107 @@ import {
   Pause,
   Settings,
   Bell,
-  User
+  User,
+  LogOut,
+  Bot,
+  Plus
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/components/AuthProvider";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { UploadCandidates } from "@/components/UploadCandidates";
+import { CampaignCreator } from "@/components/CampaignCreator";
+import { AIChat } from "@/components/AIChat";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("overview");
+  const { user, signOut } = useAuth();
+  const { toast } = useToast();
+  const [activeDialog, setActiveDialog] = useState<string | null>(null);
+  const [campaigns, setCampaigns] = useState([]);
+  const [stats, setStats] = useState({
+    totalCampaigns: 0,
+    messagesSent: 0,
+    callsMade: 0,
+    responseRate: 0
+  });
 
-  const stats = [
+  useEffect(() => {
+    loadDashboardData();
+  }, [user]);
+
+  const loadDashboardData = async () => {
+    if (!user) return;
+
+    try {
+      // Load campaigns
+      const { data: campaignsData, error: campaignsError } = await supabase
+        .from('campaigns')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (campaignsError) throw campaignsError;
+
+      setCampaigns(campaignsData || []);
+      
+      // Calculate stats
+      const totalCampaigns = campaignsData?.length || 0;
+      const messagesSent = campaignsData?.reduce((sum, campaign) => sum + (campaign.messages_sent || 0), 0) || 0;
+      const callsMade = campaignsData?.reduce((sum, campaign) => sum + (campaign.calls_made || 0), 0) || 0;
+      const responsesReceived = campaignsData?.reduce((sum, campaign) => sum + (campaign.responses_received || 0), 0) || 0;
+      const responseRate = (messagesSent + callsMade) > 0 ? ((responsesReceived / (messagesSent + callsMade)) * 100).toFixed(1) : 0;
+
+      setStats({
+        totalCampaigns,
+        messagesSent,
+        callsMade,
+        responseRate: parseFloat(responseRate.toString())
+      });
+    } catch (error: any) {
+      console.error('Error loading dashboard data:', error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/');
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const statsDisplay = [
     {
       title: "Total Campaigns",
-      value: "12",
+      value: stats.totalCampaigns.toString(),
       change: "+3",
       changeType: "positive",
       icon: BarChart3
     },
     {
       title: "Messages Sent",
-      value: "8,459",
+      value: stats.messagesSent.toLocaleString(),
       change: "+1,204",
       changeType: "positive",
       icon: MessageSquare
     },
     {
       title: "Calls Made",
-      value: "2,847",
+      value: stats.callsMade.toLocaleString(),
       change: "+586",
       changeType: "positive",
       icon: Phone
     },
     {
       title: "Response Rate",
-      value: "24.8%",
+      value: `${stats.responseRate}%`,
       change: "+2.1%",
       changeType: "positive",
       icon: TrendingUp
@@ -102,11 +172,14 @@ const Dashboard = () => {
               <Button variant="glass" size="icon">
                 <Bell className="w-4 h-4" />
               </Button>
+              <Button variant="glass" size="icon" onClick={() => setActiveDialog('chat')}>
+                <Bot className="w-4 h-4" />
+              </Button>
               <Button variant="glass" size="icon">
                 <Settings className="w-4 h-4" />
               </Button>
-              <Button variant="glass" size="icon">
-                <User className="w-4 h-4" />
+              <Button variant="glass" size="icon" onClick={handleLogout}>
+                <LogOut className="w-4 h-4" />
               </Button>
             </div>
           </div>
@@ -115,16 +188,20 @@ const Dashboard = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Quick Actions */}
-        <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Button variant="hero" size="lg" className="h-16">
+        <div className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Button variant="hero" size="lg" className="h-16" onClick={() => setActiveDialog('upload')}>
             <Upload className="w-5 h-5 mr-2" />
             Upload Candidates
           </Button>
-          <Button variant="ai" size="lg" className="h-16">
-            <Play className="w-5 h-5 mr-2" />
+          <Button variant="ai" size="lg" className="h-16" onClick={() => setActiveDialog('campaign')}>
+            <Plus className="w-5 h-5 mr-2" />
             Create Campaign
           </Button>
-          <Button variant="glass" size="lg" className="h-16">
+          <Button variant="glass" size="lg" className="h-16" onClick={() => setActiveDialog('chat')}>
+            <Bot className="w-5 h-5 mr-2" />
+            AI Assistant
+          </Button>
+          <Button variant="outline" size="lg" className="h-16">
             <FileText className="w-5 h-5 mr-2" />
             View Reports
           </Button>
@@ -132,7 +209,7 @@ const Dashboard = () => {
 
         {/* Stats Grid */}
         <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat, index) => (
+          {statsDisplay.map((stat, index) => (
             <Card key={index} className="p-6 bg-card/50 backdrop-blur-sm border-border/50 hover:bg-card/70 transition-all duration-300">
               <div className="flex items-center justify-between">
                 <div className="space-y-2">
@@ -165,7 +242,7 @@ const Dashboard = () => {
               </div>
               
               <div className="space-y-4">
-                {recentCampaigns.map((campaign) => (
+                {campaigns.slice(0, 5).map((campaign: any) => (
                   <div key={campaign.id} className="p-4 border border-border/50 rounded-lg bg-card/30">
                     <div className="flex items-center justify-between mb-3">
                       <div className="space-y-1">
@@ -174,36 +251,40 @@ const Dashboard = () => {
                       </div>
                       <div className="flex items-center space-x-2">
                         <Badge 
-                          variant={campaign.status === "Active" ? "default" : 
-                                 campaign.status === "Completed" ? "secondary" : "outline"}
+                          variant={campaign.status === "active" ? "default" : 
+                                 campaign.status === "completed" ? "secondary" : "outline"}
                         >
                           {campaign.status}
                         </Badge>
                         <Button variant="ghost" size="icon">
-                          {campaign.status === "Active" ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                          {campaign.status === "active" ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                         </Button>
                       </div>
                     </div>
                     
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Progress</span>
-                        <span className="text-card-foreground">{campaign.progress}%</span>
+                        <span className="text-muted-foreground">Messages Sent</span>
+                        <span className="text-card-foreground">{campaign.messages_sent || 0}</span>
                       </div>
-                      <Progress value={campaign.progress} className="h-2" />
                       
                       <div className="flex justify-between text-sm mt-3">
                         <span className="text-muted-foreground">
                           <Users className="w-4 h-4 inline mr-1" />
-                          {campaign.candidates} candidates
+                          {campaign.candidates_count || 0} candidates
                         </span>
                         <span className="text-card-foreground">
-                          {campaign.responses} responses
+                          {campaign.responses_received || 0} responses
                         </span>
                       </div>
                     </div>
                   </div>
                 ))}
+                {campaigns.length === 0 && (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">No campaigns yet. Create your first campaign to get started!</p>
+                  </div>
+                )}
               </div>
             </Card>
           </div>
@@ -276,6 +357,40 @@ const Dashboard = () => {
             </Card>
           </div>
         </div>
+
+        {/* Dialogs */}
+        <Dialog open={activeDialog === 'upload'} onOpenChange={() => setActiveDialog(null)}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Upload Candidates</DialogTitle>
+            </DialogHeader>
+            <UploadCandidates onUploadComplete={() => {
+              setActiveDialog(null);
+              loadDashboardData();
+            }} />
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={activeDialog === 'campaign'} onOpenChange={() => setActiveDialog(null)}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Create New Campaign</DialogTitle>
+            </DialogHeader>
+            <CampaignCreator onCampaignCreated={() => {
+              setActiveDialog(null);
+              loadDashboardData();
+            }} />
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={activeDialog === 'chat'} onOpenChange={() => setActiveDialog(null)}>
+          <DialogContent className="max-w-4xl max-h-[80vh]">
+            <DialogHeader>
+              <DialogTitle>AI Assistant</DialogTitle>
+            </DialogHeader>
+            <AIChat />
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

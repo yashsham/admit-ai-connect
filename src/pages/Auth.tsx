@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Brain, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/components/AuthProvider";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { signIn, signUp, user } = useAuth();
   
   const [isSignUp, setIsSignUp] = useState(searchParams.get("mode") === "signup");
   const [showPassword, setShowPassword] = useState(false);
@@ -27,6 +29,12 @@ const Auth = () => {
   useEffect(() => {
     setIsSignUp(searchParams.get("mode") === "signup");
   }, [searchParams]);
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -48,25 +56,12 @@ const Auth = () => {
           throw new Error("Password must be at least 6 characters");
         }
         
-        toast({
-          title: "Account created successfully!",
-          description: "Welcome to AdmitConnect AI. Redirecting to dashboard...",
-        });
-        
-        // Simulate account creation delay
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 1500);
+        const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+        await signUp(formData.email, formData.password, fullName);
+        navigate("/dashboard");
       } else {
-        toast({
-          title: "Welcome back!",
-          description: "Redirecting to your dashboard...",
-        });
-        
-        // Simulate login delay
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 1000);
+        await signIn(formData.email, formData.password);
+        navigate("/dashboard");
       }
     } catch (error: any) {
       toast({
