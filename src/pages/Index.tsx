@@ -20,7 +20,7 @@ const Index = () => {
               Revolutionizing college admissions with AI-powered automation
             </p>
             <div className="text-sm text-muted-foreground">
-              © 2024 AdmitConnect AI. All rights reserved.
+              ©2025 AdmitConnect AI. All rights reserved.
             </div>
           </div>
         </div>

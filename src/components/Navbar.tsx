@@ -29,9 +29,12 @@ const Navbar = () => {
             <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">
               Pricing
             </a>
-            <a href="#about" className="text-muted-foreground hover:text-foreground transition-colors">
+            <button 
+              onClick={() => navigate('/about')}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
               About
-            </a>
+            </button>
             <Button variant="ghost" onClick={() => navigate("/auth")}>
               Sign In
             </Button>
@@ -62,9 +65,12 @@ const Navbar = () => {
               <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">
                 Pricing
               </a>
-              <a href="#about" className="text-muted-foreground hover:text-foreground transition-colors">
+              <button 
+                onClick={() => navigate('/about')}
+                className="text-muted-foreground hover:text-foreground transition-colors text-left"
+              >
                 About
-              </a>
+              </button>
               <div className="flex flex-col space-y-2">
                 <Button variant="ghost" onClick={() => navigate("/auth")}>
                   Sign In

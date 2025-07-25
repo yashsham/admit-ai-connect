@@ -31,6 +31,7 @@ import { UploadCandidates } from "@/components/UploadCandidates";
 import { CampaignCreator } from "@/components/CampaignCreator";
 import { AIChat } from "@/components/AIChat";
 import { SettingsModal } from "@/components/SettingsModal";
+import { CampaignCard } from "@/components/CampaignCard";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -235,60 +236,42 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Campaigns List */}
           <div className="lg:col-span-2">
-            <Card className="p-6 bg-card/50 backdrop-blur-sm border-border/50">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-card-foreground">Recent Campaigns</h2>
-                <Button variant="outline" size="sm">
-                  View All
-                </Button>
-              </div>
-              
-              <div className="space-y-4">
-                {campaigns.slice(0, 5).map((campaign: any) => (
-                  <div key={campaign.id} className="p-4 border border-border/50 rounded-lg bg-card/30">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="space-y-1">
-                        <h3 className="font-semibold text-card-foreground">{campaign.name}</h3>
-                        <p className="text-sm text-muted-foreground">{campaign.type}</p>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Badge 
-                          variant={campaign.status === "active" ? "default" : 
-                                 campaign.status === "completed" ? "secondary" : "outline"}
-                        >
-                          {campaign.status}
-                        </Badge>
-                        <Button variant="ghost" size="icon">
-                          {campaign.status === "active" ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                        </Button>
-                      </div>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-card-foreground">Recent Campaigns</h2>
+              <Button variant="outline" size="sm" onClick={() => setActiveDialog('campaign')} className="btn-shiny">
+                <Plus className="w-4 h-4 mr-2" />
+                New Campaign
+              </Button>
+            </div>
+            
+            <div className="space-y-4">
+              {campaigns.slice(0, 5).map((campaign: any) => (
+                <CampaignCard 
+                  key={campaign.id} 
+                  campaign={campaign} 
+                  onUpdate={loadDashboardData}
+                />
+              ))}
+              {campaigns.length === 0 && (
+                <Card className="p-8 text-center bg-card/50 backdrop-blur-sm border-border/50">
+                  <div className="space-y-4">
+                    <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mx-auto">
+                      <Plus className="w-8 h-8 text-primary" />
                     </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Messages Sent</span>
-                        <span className="text-card-foreground">{campaign.messages_sent || 0}</span>
-                      </div>
-                      
-                      <div className="flex justify-between text-sm mt-3">
-                        <span className="text-muted-foreground">
-                          <Users className="w-4 h-4 inline mr-1" />
-                          {campaign.candidates_count || 0} candidates
-                        </span>
-                        <span className="text-card-foreground">
-                          {campaign.responses_received || 0} responses
-                        </span>
-                      </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-card-foreground mb-2">No campaigns yet</h3>
+                      <p className="text-muted-foreground mb-4">Create your first campaign to start reaching out to candidates</p>
+                      <Button 
+                        onClick={() => setActiveDialog('campaign')} 
+                        className="btn-shiny pulse-glow"
+                      >
+                        Create First Campaign
+                      </Button>
                     </div>
                   </div>
-                ))}
-                {campaigns.length === 0 && (
-                  <div className="text-center py-8">
-                    <p className="text-muted-foreground">No campaigns yet. Create your first campaign to get started!</p>
-                  </div>
-                )}
-              </div>
-            </Card>
+                </Card>
+              )}
+            </div>
           </div>
 
           {/* Sidebar */}

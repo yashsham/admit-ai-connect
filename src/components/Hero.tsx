@@ -1,13 +1,23 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Brain, Phone, MessageSquare, BarChart3, Shield, Zap } from "lucide-react";
+import { Brain, Phone, MessageSquare, BarChart3, Shield, Zap, ArrowRight, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthProvider";
 import { DemoModal } from "./DemoModal";
 
 const Hero = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [showDemo, setShowDemo] = useState(false);
+
+  const handleGetStarted = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/auth');
+    }
+  };
 
   const features = [
     {
@@ -48,6 +58,10 @@ const Hero = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center space-y-8">
           <div className="space-y-4">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6 animate-bounce-subtle">
+              <Sparkles className="w-4 h-4 text-primary mr-2" />
+              <span className="text-sm font-medium text-primary">Now with Advanced LLM Integration</span>
+            </div>
             <h1 className="text-4xl md:text-6xl font-bold bg-ai-gradient bg-clip-text text-transparent leading-tight">
               Revolutionize College Admissions with AI
             </h1>
@@ -58,11 +72,20 @@ const Hero = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="hero" size="xl" onClick={() => navigate("/auth?mode=signup")}>
-              Start Free Trial
-              <Zap className="w-5 h-5 ml-2" />
+            <Button 
+              size="lg" 
+              className="btn-shiny pulse-glow text-lg px-8 py-3"
+              onClick={handleGetStarted}
+            >
+              {user ? 'Go to Dashboard' : 'Start Free Trial'}
+              <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
-            <Button variant="glass" size="xl" onClick={() => setShowDemo(true)}>
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="hover-lift text-lg px-8 py-3"
+              onClick={() => setShowDemo(true)}
+            >
               Watch Demo
               <Brain className="w-5 h-5 ml-2" />
             </Button>
@@ -78,7 +101,8 @@ const Hero = () => {
           {features.map((feature, index) => (
             <Card 
               key={index} 
-              className="p-6 bg-card/50 backdrop-blur-sm border-border/50 hover:bg-card/70 transition-all duration-300 hover:shadow-card hover:scale-105"
+              className="p-6 bg-card/50 backdrop-blur-sm border-border/50 hover-lift float"
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="space-y-4">
                 <div className="w-12 h-12 bg-ai-gradient rounded-lg flex items-center justify-center">
