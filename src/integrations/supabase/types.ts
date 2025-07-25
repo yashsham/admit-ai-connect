@@ -167,28 +167,46 @@ export type Database = {
       }
       profiles: {
         Row: {
+          college_address: string | null
+          college_name: string | null
+          college_website: string | null
           created_at: string
           email: string | null
+          email_alerts: boolean | null
           full_name: string | null
           id: string
+          notifications_enabled: boolean | null
+          sms_alerts: boolean | null
           subscription_expires_at: string | null
           subscription_plan: string | null
           updated_at: string
         }
         Insert: {
+          college_address?: string | null
+          college_name?: string | null
+          college_website?: string | null
           created_at?: string
           email?: string | null
+          email_alerts?: boolean | null
           full_name?: string | null
           id: string
+          notifications_enabled?: boolean | null
+          sms_alerts?: boolean | null
           subscription_expires_at?: string | null
           subscription_plan?: string | null
           updated_at?: string
         }
         Update: {
+          college_address?: string | null
+          college_name?: string | null
+          college_website?: string | null
           created_at?: string
           email?: string | null
+          email_alerts?: boolean | null
           full_name?: string | null
           id?: string
+          notifications_enabled?: boolean | null
+          sms_alerts?: boolean | null
           subscription_expires_at?: string | null
           subscription_plan?: string | null
           updated_at?: string
