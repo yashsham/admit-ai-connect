@@ -1,10 +1,13 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Brain, Phone, MessageSquare, BarChart3, Shield, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { DemoModal } from "./DemoModal";
 
 const Hero = () => {
   const navigate = useNavigate();
+  const [showDemo, setShowDemo] = useState(false);
 
   const features = [
     {
@@ -59,7 +62,7 @@ const Hero = () => {
               Start Free Trial
               <Zap className="w-5 h-5 ml-2" />
             </Button>
-            <Button variant="glass" size="xl">
+            <Button variant="glass" size="xl" onClick={() => setShowDemo(true)}>
               Watch Demo
               <Brain className="w-5 h-5 ml-2" />
             </Button>
@@ -110,6 +113,8 @@ const Hero = () => {
           </div>
         </div>
       </div>
+
+      <DemoModal open={showDemo} onOpenChange={setShowDemo} />
     </div>
   );
 };

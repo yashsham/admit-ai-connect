@@ -30,12 +30,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { UploadCandidates } from "@/components/UploadCandidates";
 import { CampaignCreator } from "@/components/CampaignCreator";
 import { AIChat } from "@/components/AIChat";
+import { SettingsModal } from "@/components/SettingsModal";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const [activeDialog, setActiveDialog] = useState<string | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
   const [campaigns, setCampaigns] = useState([]);
   const [stats, setStats] = useState({
     totalCampaigns: 0,
@@ -175,7 +177,7 @@ const Dashboard = () => {
               <Button variant="glass" size="icon" onClick={() => setActiveDialog('chat')}>
                 <Bot className="w-4 h-4" />
               </Button>
-              <Button variant="glass" size="icon">
+              <Button variant="glass" size="icon" onClick={() => setShowSettings(true)}>
                 <Settings className="w-4 h-4" />
               </Button>
               <Button variant="glass" size="icon" onClick={handleLogout}>
@@ -391,6 +393,8 @@ const Dashboard = () => {
             <AIChat />
           </DialogContent>
         </Dialog>
+
+        <SettingsModal open={showSettings} onOpenChange={setShowSettings} />
       </div>
     </div>
   );
