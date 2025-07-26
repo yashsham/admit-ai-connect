@@ -2,6 +2,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Play, ExternalLink, Star } from 'lucide-react';
+import { useState } from 'react';
+import { ScheduleDemoModal } from './ScheduleDemoModal';
 
 interface DemoModalProps {
   open: boolean;
@@ -9,6 +11,7 @@ interface DemoModalProps {
 }
 
 export const DemoModal = ({ open, onOpenChange }: DemoModalProps) => {
+  const [showScheduleDemo, setShowScheduleDemo] = useState(false);
   const demoVideos = [
     {
       title: "Getting Started with AdmitConnect AI",
@@ -116,7 +119,10 @@ export const DemoModal = ({ open, onOpenChange }: DemoModalProps) => {
                 <Button variant="hero" onClick={() => onOpenChange(false)}>
                   Start Free Trial
                 </Button>
-                <Button variant="outline">
+                <Button 
+                  variant="outline"
+                  onClick={() => setShowScheduleDemo(true)}
+                >
                   Schedule Personal Demo
                 </Button>
               </div>
@@ -124,6 +130,11 @@ export const DemoModal = ({ open, onOpenChange }: DemoModalProps) => {
           </Card>
         </div>
       </DialogContent>
+      
+      <ScheduleDemoModal 
+        open={showScheduleDemo} 
+        onOpenChange={setShowScheduleDemo} 
+      />
     </Dialog>
   );
 };

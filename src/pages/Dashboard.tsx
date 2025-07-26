@@ -32,6 +32,7 @@ import { CampaignCreator } from "@/components/CampaignCreator";
 import { AIChat } from "@/components/AIChat";
 import { SettingsModal } from "@/components/SettingsModal";
 import { CampaignCard } from "@/components/CampaignCard";
+import { PaymentModal } from "@/components/PaymentModal";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -39,6 +40,7 @@ const Dashboard = () => {
   const { toast } = useToast();
   const [activeDialog, setActiveDialog] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
   const [campaigns, setCampaigns] = useState([]);
   const [stats, setStats] = useState({
     totalCampaigns: 0,
@@ -335,7 +337,12 @@ const Dashboard = () => {
                 <p className="text-sm text-muted-foreground">
                   Get unlimited campaigns and advanced analytics
                 </p>
-                <Button variant="premium" size="sm" className="w-full">
+                <Button 
+                  variant="premium" 
+                  size="sm" 
+                  className="w-full btn-shiny"
+                  onClick={() => setShowPayment(true)}
+                >
                   Upgrade Now
                 </Button>
               </div>
@@ -378,6 +385,7 @@ const Dashboard = () => {
         </Dialog>
 
         <SettingsModal open={showSettings} onOpenChange={setShowSettings} />
+        <PaymentModal open={showPayment} onOpenChange={setShowPayment} />
       </div>
     </div>
   );

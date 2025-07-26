@@ -2,11 +2,13 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { useToast } from '@/hooks/use-toast';
+import { signInWithGoogle } from '@/lib/firebase';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
   signUp: (email: string, password: string, fullName: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -97,6 +99,41 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     });
   };
 
+  const signInWithGoogleAuth = async () => {
+    try {
+      const result = await signInWithGoogle();
+      const { user: firebaseUser } = result;
+      
+      // Sign in to Supabase with the Google access token
+      const { error } = await supabase.auth.signInWithIdToken({
+        provider: 'google',
+        token: await firebaseUser.getIdToken(),
+      });
+
+      if (error) throw error;
+
+      // Create or update profile
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: firebaseUser.uid,
+          full_name: firebaseUser.displayName,
+          email: firebaseUser.email,
+        });
+
+      if (profileError) {
+        console.error('Error creating/updating profile:', profileError);
+      }
+
+      toast({
+        title: "Welcome!",
+        description: "Successfully signed in with Google.",
+      });
+    } catch (error: any) {
+      throw new Error(error.message || 'Failed to sign in with Google');
+    }
+  };
+
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -113,6 +150,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     user,
     loading,
     signIn,
+    signInWithGoogle: signInWithGoogleAuth,
     signUp,
     signOut,
   };
