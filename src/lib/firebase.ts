@@ -2,12 +2,13 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "demo-api-key",
-  authDomain: "admitconnect-ai.firebaseapp.com",
-  projectId: "admitconnect-ai",
-  storageBucket: "admitconnect-ai.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "demo-app-id"
+  apiKey: "AIzaSyD9oaem-ctNxN5hZHm0DVNCFGXzlPQx6VE",
+  authDomain: "adminconnect-ai.firebaseapp.com",
+  projectId: "adminconnect-ai",
+  storageBucket: "adminconnect-ai.firebasestorage.app",
+  messagingSenderId: "223631586738",
+  appId: "1:223631586738:web:2f841a4b58f9a8f5a120ab",
+  measurementId: "G-X6YMC4E9GR"
 };
 
 const app = initializeApp(firebaseConfig);
