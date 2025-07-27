@@ -165,6 +165,30 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_submissions: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           college_address: string | null
@@ -210,6 +234,33 @@ export type Database = {
           subscription_expires_at?: string | null
           subscription_plan?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      schedule_demos: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string | null
+          name: string
+          preferred_time: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message?: string | null
+          name: string
+          preferred_time: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string | null
+          name?: string
+          preferred_time?: string
         }
         Relationships: []
       }

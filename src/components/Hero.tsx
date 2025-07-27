@@ -52,8 +52,12 @@ const Hero = () => {
     }
   ];
 
+  const scrollToFeatures = () => {
+    document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <div className="min-h-screen pt-16 bg-ai-gradient-subtle">
+    <div className="min-h-screen pt-16 hero-gradient-animated">
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center space-y-8">
@@ -62,7 +66,7 @@ const Hero = () => {
               <Sparkles className="w-4 h-4 text-primary mr-2" />
               <span className="text-sm font-medium text-primary">Now with Advanced LLM Integration</span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold bg-ai-gradient bg-clip-text text-transparent leading-tight">
+            <h1 className="text-4xl md:text-6xl font-bold bg-ai-gradient bg-clip-text text-transparent leading-tight hero-title-float">
               Revolutionize College Admissions with AI
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
@@ -74,7 +78,7 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg" 
-              className="btn-shiny pulse-glow text-lg px-8 py-3"
+              className="cta-glow pulse-glow text-lg px-8 py-3"
               onClick={handleGetStarted}
             >
               {user ? 'Go to Dashboard' : 'Start Free Trial'}
@@ -84,9 +88,9 @@ const Hero = () => {
               variant="outline" 
               size="lg" 
               className="hover-lift text-lg px-8 py-3"
-              onClick={() => setShowDemo(true)}
+              onClick={scrollToFeatures}
             >
-              Watch Demo
+              Learn More
               <Brain className="w-5 h-5 ml-2" />
             </Button>
           </div>

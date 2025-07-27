@@ -1,9 +1,20 @@
 import Navbar from "@/components/Navbar";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Calendar, Users, Zap, Target, Mail, Phone, Globe } from "lucide-react";
+import { ContactModal } from "@/components/ContactModal";
+import { ScheduleModal } from "@/components/ScheduleModal";
+import { BackToTop } from "@/components/BackToTop";
 
 const About = () => {
+  const [showContact, setShowContact] = useState(false);
+  const [showSchedule, setShowSchedule] = useState(false);
+
+  const scrollToFeatures = () => {
+    window.location.href = '/#features';
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -137,11 +148,21 @@ const About = () => {
             making college admissions more accessible and efficient through technology.
           </p>
           <div className="flex justify-center space-x-4">
-            <Button variant="outline" size="sm">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setShowContact(true)}
+              className="hover-lift"
+            >
               <Mail className="w-4 h-4 mr-2" />
               Contact Us
             </Button>
-            <Button variant="outline" size="sm">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={scrollToFeatures}
+              className="hover-lift"
+            >
               <Globe className="w-4 h-4 mr-2" />
               Learn More
             </Button>
@@ -157,7 +178,11 @@ const About = () => {
             Book a personalized demo to see how AdmitConnect AI can transform 
             your admissions outreach and boost enrollment.
           </p>
-          <Button size="lg" className="btn-shiny pulse-glow">
+          <Button 
+            size="lg" 
+            className="cta-glow pulse-glow"
+            onClick={() => setShowSchedule(true)}
+          >
             <Calendar className="w-5 h-5 mr-2" />
             Schedule Live Demo
           </Button>
@@ -180,6 +205,10 @@ const About = () => {
           </div>
         </div>
       </footer>
+      
+      <ContactModal open={showContact} onOpenChange={setShowContact} />
+      <ScheduleModal open={showSchedule} onOpenChange={setShowSchedule} />
+      <BackToTop />
     </div>
   );
 };

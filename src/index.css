@@ -127,6 +127,89 @@
 }
 
 @layer components {
+  /* Logo Color Cycling Animation */
+  .logo-colorful {
+    animation: color-cycle 3s ease-in-out infinite;
+  }
+  
+  @keyframes color-cycle {
+    0%, 100% { color: hsl(217 91% 60%); }
+    33% { color: hsl(270 100% 75%); }
+    66% { color: hsl(192 100% 70%); }
+  }
+  
+  /* Logo Hover Effects */
+  .logo-hover {
+    @apply transition-all duration-300 hover:scale-105;
+    filter: drop-shadow(0 0 8px hsl(217 91% 60% / 0.5));
+  }
+  
+  .logo-hover:hover {
+    filter: drop-shadow(0 0 20px hsl(217 91% 60% / 0.8));
+  }
+  
+  /* Hero Gradient Background Animation */
+  .hero-gradient-animated {
+    background: linear-gradient(-45deg, 
+      hsl(217 91% 60%), 
+      hsl(270 100% 75%), 
+      hsl(192 100% 70%), 
+      hsl(217 91% 60%));
+    background-size: 400% 400%;
+    animation: gradient-shift 15s ease infinite;
+  }
+  
+  @keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  /* Title Floating Animation */
+  .hero-title-float {
+    animation: title-float 6s ease-in-out infinite;
+  }
+  
+  @keyframes title-float {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-8px) scale(1.02); }
+  }
+  
+  /* CTA Button Glow Effects */
+  .cta-glow {
+    @apply relative overflow-hidden;
+    box-shadow: 0 0 20px hsl(217 91% 60% / 0.3);
+    transition: all 0.3s ease;
+  }
+  
+  .cta-glow::before {
+    content: '';
+    @apply absolute inset-0;
+    background: linear-gradient(45deg, transparent 30%, hsl(217 91% 60% / 0.4) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.8s;
+  }
+  
+  .cta-glow:hover {
+    box-shadow: 0 0 40px hsl(217 91% 60% / 0.6), 
+                0 0 80px hsl(217 91% 60% / 0.3);
+    transform: translateY(-2px);
+  }
+  
+  .cta-glow:hover::before {
+    transform: translateX(100%);
+  }
+  
+  /* Bounce Subtle Animation */
+  .animate-bounce-subtle {
+    animation: bounce-subtle 2s infinite;
+  }
+  
+  @keyframes bounce-subtle {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-4px); }
+  }
+  
   /* Shiny Button Effects */
   .btn-shiny {
     @apply relative overflow-hidden transition-all duration-300 hover:shadow-glow hover:-translate-y-0.5;
@@ -181,5 +264,10 @@
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-10px); }
+  }
+  
+  /* Smooth scroll behavior */
+  html {
+    scroll-behavior: smooth;
   }
 }
