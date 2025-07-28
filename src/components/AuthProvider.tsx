@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { useToast } from '@/hooks/use-toast';
-import { signInWithGoogle } from '@/lib/firebase';
 
 interface AuthContextType {
   user: User | null;
@@ -101,33 +100,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signInWithGoogleAuth = async () => {
     try {
-      const result = await signInWithGoogle();
-      const { user: firebaseUser } = result;
-      
-      // Sign in to Supabase with the Google access token
-      const { error } = await supabase.auth.signInWithIdToken({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        token: await firebaseUser.getIdToken(),
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`
+        }
       });
 
       if (error) throw error;
 
-      // Create or update profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .upsert({
-          id: firebaseUser.uid,
-          full_name: firebaseUser.displayName,
-          email: firebaseUser.email,
-        });
-
-      if (profileError) {
-        console.error('Error creating/updating profile:', profileError);
-      }
-
       toast({
-        title: "Welcome!",
-        description: "Successfully signed in with Google.",
+        title: "Redirecting to Google...",
+        description: "Please complete authentication in the popup window.",
       });
     } catch (error: any) {
       throw new Error(error.message || 'Failed to sign in with Google');
