@@ -57,7 +57,7 @@ const Hero = () => {
   };
 
   return (
-    <div className="min-h-screen pt-16 hero-gradient-animated">
+    <div className="min-h-screen pt-16 hero-black hero-rainbow-hover">
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center space-y-8">

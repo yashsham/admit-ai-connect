@@ -100,20 +100,37 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signInWithGoogleAuth = async () => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      console.log('Starting Google Sign-In...');
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
+          redirectTo: `${window.location.origin}/dashboard`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Google Sign-In Error:', error);
+        throw error;
+      }
+
+      console.log('Google OAuth initiated successfully:', data);
 
       toast({
         title: "Redirecting to Google...",
         description: "Please complete authentication in the popup window.",
       });
     } catch (error: any) {
+      console.error('Full Google Sign-In Error:', error);
+      toast({
+        title: "Sign-in failed",
+        description: error.message || 'Failed to sign in with Google. Please check if Google OAuth is enabled in Supabase.',
+        variant: "destructive"
+      });
       throw new Error(error.message || 'Failed to sign in with Google');
     }
   };

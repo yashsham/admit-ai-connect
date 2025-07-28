@@ -270,4 +270,75 @@
   html {
     scroll-behavior: smooth;
   }
+  
+  /* Black Hero Background */
+  .hero-black {
+    background: #000000;
+  }
+  
+  /* Rainbow Hover Animation */
+  .hero-rainbow-hover {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  .hero-rainbow-hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      45deg,
+      #ff0000 0%,
+      #ff8c00 14.28%,
+      #ffd700 28.56%,
+      #00ff00 42.84%,
+      #0000ff 57.12%,
+      #4b0082 71.4%,
+      #8b00ff 85.68%,
+      #ff0000 100%
+    );
+    background-size: 300% 300%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+    animation: rainbow-shimmer 3s ease-in-out infinite;
+  }
+  
+  .hero-rainbow-hover:hover::before {
+    opacity: 0.15;
+  }
+  
+  .hero-rainbow-hover:hover {
+    animation: rainbow-glow 2s ease-in-out infinite;
+  }
+  
+  @keyframes rainbow-shimmer {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  @keyframes rainbow-glow {
+    0%, 100% {
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+    }
+    16.66% {
+      box-shadow: 0 0 30px rgba(255, 140, 0, 0.4);
+    }
+    33.32% {
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+    }
+    49.98% {
+      box-shadow: 0 0 30px rgba(0, 255, 0, 0.4);
+    }
+    66.64% {
+      box-shadow: 0 0 30px rgba(0, 0, 255, 0.4);
+    }
+    83.3% {
+      box-shadow: 0 0 30px rgba(75, 0, 130, 0.4);
+    }
+  }
 }
